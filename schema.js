@@ -7,24 +7,22 @@ const Schema = {
         id: String,
         groups: {id}
     },
-    groups: {
+    season: {
         name: string,
-        status: Number,
+        phase: Number,
         id: string,
-        users: [id],
-        values: {
-            action: points
-        },
-        votes: {
-            action: {
-                userID: points
+        users: {id},
+        activites : {
+            ["name-of-activities"]: {
+                userID: [points]
             }
         }
     },
-    activity: {
+    
+    "activity-event": {
         id: string,
         user: id,
-        group: id,
+        season: id,
         action: string,
         date: Timestamp
     }
