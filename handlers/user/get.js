@@ -6,15 +6,13 @@ admin.initializeApp({
 });
 const Controller = require('../../controllers/users-controller');
 
-export const create = async event => {
+export const get = async event => {
 	try {
-		const body = JSON.parse(event.body);
-		const {username, password, email} = body;
-		console.log('event body', body);
+		const uid = event.requestContext.authorizer.uid
 
 		const controller = new Controller(admin);
 
-		const profile = await controller.create({username, email}, password);
+		const profile = await controller.get(uid);
 
 		return {
 			statusCode: 200,
@@ -28,11 +26,11 @@ export const create = async event => {
 		};
 	} catch (error) {
 		return {
-			statusCode: 400,
 			headers: {
 				'Access-Control-Allow-Origin': '*',
 				'Access-Control-Allow-Credentials': true,
 			},
+			statusCode: 400,
 			body: JSON.stringify({
 				error
 			})

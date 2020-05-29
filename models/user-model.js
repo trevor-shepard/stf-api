@@ -4,7 +4,6 @@ const {NotFoundError, InsufficentDataError, AuthError} = require('../utils/error
 
 module.exports = class UserModel extends DataModel {
 	constructor(admin) {
-		console.log('user model');
 		super(admin, 'users');
 		this.auth = admin.auth();
 	}
@@ -15,7 +14,7 @@ module.exports = class UserModel extends DataModel {
 				throw new InsufficentDataError('no user id');
 			}
 
-			const user = await this.getWithID(uid);
+			const user = await this.getRaw(uid);
 
 			if (!user) {
 				throw new NotFoundError('User not found');
@@ -72,7 +71,8 @@ module.exports = class UserModel extends DataModel {
 		try {
 			await this.collection.doc(uid).set({
 				...profile,
-				id: uid
+				id: uid,
+				groups: {}
 			});
 
 			console.log('finish create user profile');

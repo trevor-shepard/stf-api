@@ -11,13 +11,7 @@ module.exports = class UserController {
 		try {
 			const user = await this.model.get(id);
 
-			const {email} = user;
-			const userResponse = {
-				email,
-				id
-			};
-
-			return userResponse;
+			return user;
 		} catch (error) {
 			console.log('controller level user get error', error);
 			throw error;

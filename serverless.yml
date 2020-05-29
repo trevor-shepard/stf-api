@@ -36,23 +36,27 @@ custom:
       scripts:
         - npm rebuild grpc --target=8.1.0 --target_arch=x64 --target_platform=linux --target_libc=glibc
 functions:
+  authorizerFunc:
+    handler: handlers/authHandler.verifyAuth
+  user-get:
+    handler: handlers/user/get.get
+    events:
+      - http:
+          path: user
+          method: get
+          cors: true
+          authorizer:  # execute this before endpoint
+            name: authorizerFunc
+            resultTtlInSeconds: 0
+            identitySource: method.request.header.Authorization
+            type: token
   user-create:
     handler: handlers/user/create.create
     events:
       - http:
           path: user
           method: post
-          cors:
-            origin: '*' # <-- Specify allowed origin
-            headers: # <-- Specify allowed headers
-              - Content-Type
-              - X-Amz-Date
-              - Authorization
-              - X-Api-Key
-              - X-Amz-Security-Token
-              - X-Amz-User-Agent
-              - token
-            allowCredentials: false
+          cors: true
 #    Define function environment variables here
 #    environment:
 #      variable2: value2
