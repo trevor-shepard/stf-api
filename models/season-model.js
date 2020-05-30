@@ -16,7 +16,7 @@ module.exports = class SeasonModel extends DataModel {
                 users,
                 activities,
                 phase: 0,
-                users: {id}
+                users: {}
             }
 
             const id = this.createObject(payload)
@@ -36,18 +36,18 @@ module.exports = class SeasonModel extends DataModel {
         try {
             if (!id) throw InsufficentDataError('missing id')
 
-            const group = await this.getRaw(id)
+            const season = await this.getRaw(id)
 
-            if (!user) throw NotFoundError('group not found')
+            if (!season) throw NotFoundError('group not found')
 
-            return group
+            return season
         } catch (error) {
             console.log('Get Model Level Group Error', error);
             throw error
         }
     }
 
-    async update(update, id) {
+    async update(id, update) {
 		try {
 			if (!update || !id) throw new InsufficentDataError('insufficent data for user update');
 			
@@ -66,12 +66,11 @@ module.exports = class SeasonModel extends DataModel {
     // private methods
 
     validateData(data) {
-        const {name, users, values, votes} = data
+        const {name, users, values} = data
         
         this.validateString(name)
         this.validateMapObject(users)
         this.validateMapObject(values)
-        this.validateMapObject(votes)
     }
     
 
