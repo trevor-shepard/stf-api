@@ -57,6 +57,18 @@ functions:
           path: user
           method: post
           cors: true
+  season-create:
+    handler: handlers/season/create.create
+    events:
+      - http:
+          path: season
+          method: post
+          cors: true
+          authorizer:  # execute this before endpoint
+            name: authorizerFunc
+            resultTtlInSeconds: 0
+            identitySource: method.request.header.Authorization
+            type: token
 #    Define function environment variables here
 #    environment:
 #      variable2: value2
