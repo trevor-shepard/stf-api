@@ -28,7 +28,7 @@ module.exports = class UserModel extends DataModel {
 		}
 	}
 
-	async update(update, uid) {
+	async update(uid, update) {
 		try {
 			if (!update || !uid) {
 				throw new InsufficentDataError('insufficent data for user update');

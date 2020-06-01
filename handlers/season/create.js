@@ -4,17 +4,17 @@ const serviceAccount = require('../../config/fbConfig.json');
 admin.initializeApp({
 	credential: admin.credential.cert(serviceAccount)
 });
-const Controller = require('../../controllers/users-controller');
+const Controller = require('../../controllers/seasons-controller');
 
 export const create = async event => {
 	try {
-		const body = JSON.parse(event.body);
-		const {username, password, email} = body;
-		console.log('event body', body);
+		const uid = event.requestContext.authorizer.uid;
 
 		const controller = new Controller(admin);
 
-		const profile = await controller.create({username, email}, password);
+		const body = JSON.parse(event.body);
+
+		const season = controller.create(body, uid);
 
 		return {
 			statusCode: 200,
@@ -23,7 +23,7 @@ export const create = async event => {
 				'Access-Control-Allow-Credentials': true
 			},
 			body: JSON.stringify({
-				...profile
+				...season
 			})
 		};
 	} catch (error) {

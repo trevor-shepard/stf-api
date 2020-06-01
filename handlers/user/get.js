@@ -8,7 +8,7 @@ const Controller = require('../../controllers/users-controller');
 
 export const get = async event => {
 	try {
-		const uid = event.requestContext.authorizer.uid
+		const uid = event.requestContext.authorizer.uid;
 
 		const controller = new Controller(admin);
 
@@ -18,17 +18,17 @@ export const get = async event => {
 			statusCode: 200,
 			headers: {
 				'Access-Control-Allow-Origin': '*',
-				'Access-Control-Allow-Credentials': true,
+				'Access-Control-Allow-Credentials': true
 			},
 			body: JSON.stringify({
-				...profile 
+				...profile
 			})
 		};
 	} catch (error) {
 		return {
 			headers: {
 				'Access-Control-Allow-Origin': '*',
-				'Access-Control-Allow-Credentials': true,
+				'Access-Control-Allow-Credentials': true
 			},
 			statusCode: 400,
 			body: JSON.stringify({

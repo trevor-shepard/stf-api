@@ -1,31 +1,33 @@
-import { Timestamp } from "@google-cloud/firestore";
+import {Timestamp} from '@google-cloud/firestore';
 
 const Schema = {
-    users: {
-        email: String,
-        username: String,
-        id: String,
-        groups: {id}
-    },
-    groups: {
-        name: string,
-        status: Number,
-        id: string,
-        users: [id],
-        values: {
-            action: points
-        },
-        votes: {
-            action: {
-                userID: points
-            }
-        }
-    },
-    activity: {
-        id: string,
-        user: id,
-        group: id,
-        action: string,
-        date: Timestamp
-    }
-}
+	users: {
+		email: String,
+		username: String,
+		id: String,
+		groups: {id}
+	},
+	season: {
+		name: string,
+		phase: Number,
+		id: string,
+		users: {id},
+		activites: {
+			'name-of-activities': {
+				userID: [points]
+			}
+		}
+	},
+
+	'activity-event': {
+		id: string,
+		user: id,
+		season: id,
+		action: string,
+		date: Timestamp
+	}
+};
+
+Questions = {
+	1: 'How should a season start, when creator decides, when all votes are in, when % of votes for % of slots are taken'
+};
