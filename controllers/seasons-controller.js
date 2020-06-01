@@ -1,11 +1,13 @@
 const UserModel = require('../models/user-model');
 const SeasonModel = require('../models/season-model');
+const EventModel = require('../models/event-model');
 const {InsufficentDataError} = require('../utils/errors');
 
 module.exports = class SeasonController {
 	constructor(admin) {
 		this.model = new SeasonModel(admin);
 		this.userModel = new UserModel(admin);
+		this.EventModel = new SeasonModel(admin);
 	}
 
 	async get(id) {
@@ -107,5 +109,10 @@ module.exports = class SeasonController {
 			console.log('controller level season begin error', error);
 			throw error;
 		}
+	}
+
+
+	async getActivities(seasonID) {
+		return await this.EventModel.queryCollection("season", seasonID)
 	}
 };

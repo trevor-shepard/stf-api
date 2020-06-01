@@ -8,7 +8,6 @@ module.exports = class EventModel extends DataModel {
 
 	async create(data) {
 		try {
-			this.validateData(data);
 			const {user, season, action, date} = data;
 
 			const payload = {
@@ -66,7 +65,7 @@ module.exports = class EventModel extends DataModel {
 
 	// Private methods
 
-	validateData(data) {
+	validateCreateData(data) {
 		const {user, season, action, date} = data;
         this.validateID(user)
         this.validateID(season)
