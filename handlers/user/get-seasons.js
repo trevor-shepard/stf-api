@@ -7,13 +7,13 @@ admin.initializeApp({
 const Controller = require('../../controllers/users-controller');
 const createResponse = require('../../utils/response-constructor');
 
-export const get = async (event) => {
+export const getSeasons = async (event) => {
   try {
     const uid = event.requestContext.authorizer.uid;
 
     const controller = new Controller(admin);
 
-    const profile = await controller.get(uid);
+    const profile = await controller.getSeasons(uid);
 
     return createResponse(200, profile);
   } catch (error) {

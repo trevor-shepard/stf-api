@@ -1,0 +1,5 @@
+{
+    "space": true,
+    "ignores": ["schema.js", "webpack.config.js"],
+    "prettier": true
+}

@@ -37,7 +37,7 @@ custom:
         - npm rebuild grpc --target=8.1.0 --target_arch=x64 --target_platform=linux --target_libc=glibc
 functions:
   authorizerFunc:
-    handler: handlers/authHandler.verifyAuth
+    handler: handlers/auth-handler.verifyAuth
   user-get:
     handler: handlers/user/get.get
     events:
@@ -57,12 +57,48 @@ functions:
           path: user
           method: post
           cors: true
+  user-get-seasons:
+    handler: handlers/user/get-seasons.getSeasons
+    events:
+      - http:
+          path: user/seasons
+          method: get
+          cors: true
+          authorizer:  # execute this before endpoint
+            name: authorizerFunc
+            resultTtlInSeconds: 0
+            identitySource: method.request.header.Authorization
+            type: token
   season-create:
     handler: handlers/season/create.create
     events:
       - http:
           path: season
           method: post
+          cors: true
+          authorizer:  # execute this before endpoint
+            name: authorizerFunc
+            resultTtlInSeconds: 0
+            identitySource: method.request.header.Authorization
+            type: token
+  season-join:
+    handler: handlers/season/join.join
+    events:
+      - http:
+          path: season/{id}/join
+          method: put
+          cors: true
+          authorizer:  # execute this before endpoint
+            name: authorizerFunc
+            resultTtlInSeconds: 0
+            identitySource: method.request.header.Authorization
+            type: token
+  season-vote:
+    handler: handlers/season/vote.vote
+    events:
+      - http:
+          path: season/{id}/vote
+          method: put
           cors: true
           authorizer:  # execute this before endpoint
             name: authorizerFunc
