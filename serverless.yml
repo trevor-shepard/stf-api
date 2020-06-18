@@ -69,6 +69,18 @@ functions:
             resultTtlInSeconds: 0
             identitySource: method.request.header.Authorization
             type: token
+  get-season-events:
+    handler: handlers/season/get-events.getEvents
+    events:
+      - http:
+          path: seasons/{id}/events
+          method: get
+          cors: true
+          authorizer:  # execute this before endpoint
+            name: authorizerFunc
+            resultTtlInSeconds: 0
+            identitySource: method.request.header.Authorization
+            type: token
   season-create:
     handler: handlers/season/create.create
     events:
@@ -105,18 +117,27 @@ functions:
             resultTtlInSeconds: 0
             identitySource: method.request.header.Authorization
             type: token
-#    Define function environment variables here
-#    environment:
-#      variable2: value2
-
-# you can add CloudFormation resource templates here
-#resources:
-#  Resources:
-#    NewResource:
-#      Type: AWS::S3::Bucket
-#      Properties:
-#        BucketName: my-new-bucket
-#  Outputs:
-#     NewOutput:
-#       Description: "Description for the output"
-#       Value: "Some output value"
+  season-begin:
+    handler: handlers/season/begin.begin
+    events:
+      - http:
+          path: season/{id}/begin
+          method: put
+          cors: true
+          authorizer:  # execute this before endpoint
+            name: authorizerFunc
+            resultTtlInSeconds: 0
+            identitySource: method.request.header.Authorization
+            type: token
+  event-create:
+    handler: handlers/event/create.create
+    events:
+      - http:
+          path: event
+          method: post
+          cors: true
+          authorizer:  # execute this before endpoint
+            name: authorizerFunc
+            resultTtlInSeconds: 0
+            identitySource: method.request.header.Authorization
+            type: token

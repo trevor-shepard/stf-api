@@ -37,7 +37,8 @@ module.exports = class UserModel extends DataModel {
       if (!update || !uid) {
         throw new InsufficentDataError('insufficent data for user update');
       }
-      console.log('user model uid', uid)
+
+      console.log('user model uid', uid);
       this.validateID(uid);
 
       await this.updateRaw(update, uid);
@@ -78,7 +79,8 @@ module.exports = class UserModel extends DataModel {
       await this.collection.doc(uid).set({
         ...profile,
         id: uid,
-        seasons: {}
+        seasons: {},
+        activities: {}
       });
 
       console.log('finish create user profile');

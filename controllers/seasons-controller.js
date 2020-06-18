@@ -10,9 +10,9 @@ module.exports = class SeasonController {
     this.eventModel = new EventModel(admin);
   }
 
-  async get(id) {
+  async get(seasonID) {
     try {
-      const season = await this.model.get(id);
+      const season = await this.model.get(seasonID);
       return season;
     } catch (error) {
       console.log('controller level season get error', error);
@@ -22,8 +22,8 @@ module.exports = class SeasonController {
 
   async create(data, uid) {
     try {
-      console.log('data', data)
-      console.log('uid', uid)
+      console.log('data', data);
+      console.log('uid', uid);
 
       const user = await this.userModel.get(uid);
 
@@ -57,10 +57,17 @@ module.exports = class SeasonController {
       const user = await this.userModel.get(uid);
       const season = await this.model.get(seasonID);
 
-      await this.userModel.update(uid, {seasons: {[season.id]: season.name}});
+      await this.userModel.update(uid, {
+        seasons: {...user.seasons, [season.id]: season.name}
+      });
       await this.model.update(seasonID, {
         users: {...season.users, [user.id]: user.username}
       });
+
+      return {
+        ...season,
+        users: {...season.users, [user.id]: user.username}
+      };
     } catch (error) {
       console.log('controller level season join error', error);
       throw error;
@@ -71,27 +78,29 @@ module.exports = class SeasonController {
     try {
       const parsedValue = Number.parseInt(value, 10);
       if ([activity, parsedValue, uid, seasonID].includes(undefined)) {
-        throw new InsufficentDataError('missing id');
+        throw new InsufficentDataError('missing data');
       }
 
       const season = await this.model.get(seasonID);
+      const {votes} = season;
+      const activities = Object.keys(votes);
 
-      const update = JSON.parse(JSON.stringify(season.activities));
-
-      const activities = Object.keys(season.activities);
-      if (activities[activity]) {
-        update[activity] = {...update[activity], [uid]: parsedValue};
+      if (activities.includes(activity)) {
+        console.log('votes before spread', votes);
+        votes[activity] = {...votes[activity], [uid]: parsedValue};
+        console.log('votes after spread', votes);
       } else {
-        update[activity] = {[uid]: parsedValue};
+        console.log('activity not in activity list', votes);
+        votes[activity] = {[uid]: parsedValue};
       }
 
       await this.model.update(seasonID, {
-        activities: update
+        votes
       });
 
       return {
         ...season,
-        activities: update
+        votes
       };
     } catch (error) {
       console.log('controller level season vote error', error);
@@ -113,17 +122,69 @@ module.exports = class SeasonController {
 
   async begin(seasonID) {
     try {
+      // Can put in logic to only include elements that have some precentage of votes
+      const season = await this.model.get(seasonID);
+
+      const proposedActivites = Object.entries(season.votes);
+      console.log('proposed activities', proposedActivites);
+      const seasonActivites = proposedActivites.reduce(
+        (acc, proposedActvity) => {
+          const [activityName, votes] = proposedActvity;
+          const value = Object.values(votes).reduce(
+            (total, value_) => total + value_
+          );
+          return {...acc, [activityName]: value};
+        },
+        {}
+      );
+      console.log('season activities', seasonActivites);
       await this.model.update(seasonID, {
-        phase: 1
+        phase: 2,
+        activities: seasonActivites
       });
+      console.log('season updated');
+      for (const userID of Object.keys(season.users)) {
+        const user = await this.userModel.get(userID);
+        const userActivities = user.activities;
+        for (const activityName of Object.keys(seasonActivites)) {
+          if (Object.keys(userActivities).includes(activityName)) {
+            userActivities[activityName] = [
+              ...userActivities[activityName],
+              seasonID
+            ];
+          } else {
+            userActivities[activityName] = [seasonID];
+          }
+        }
+
+        await this.userModel.update(userID, {activities: userActivities});
+        console.log(`${userID} updated`);
+      }
+
+      return await this.model.get(seasonID);
     } catch (error) {
       console.log('controller level season begin error', error);
       throw error;
     }
   }
 
-  async getActivities(seasonID) {
-    const activites = await this.eventModel.queryCollection('season', seasonID);
-    return activites;
+  async getEvents(seasonID) {
+    try {
+      const season = await this.model.get(seasonID);
+      const userIDs = Object.keys(season.users);
+      const userEvents = {};
+      for (const userID of userIDs) {
+        const events = await this.eventModel.getUserEvents(
+          userID,
+          season.seasonStart
+        );
+        userEvents[userID] = events;
+      }
+
+      return userEvents;
+    } catch (error) {
+      console.log('controller level season get events error', error);
+      throw error;
+    }
   }
 };

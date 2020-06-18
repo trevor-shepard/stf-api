@@ -8,7 +8,7 @@ module.exports = class SeasonModel extends DataModel {
 
   async create(data) {
     try {
-      // this.validateCreateData(data);
+      // This.validateCreateData(data);
       const {name, users, voteStart, seasonStart} = data;
 
       const payload = {
@@ -16,8 +16,9 @@ module.exports = class SeasonModel extends DataModel {
         users,
         activities: {},
         phase: 0,
-        voteStart,
-        seasonStart,
+        voteStart: new Date(voteStart),
+        seasonStart: new Date(seasonStart),
+        votes: {}
       };
 
       const id = await this.createObject(payload);

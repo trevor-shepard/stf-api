@@ -8,13 +8,12 @@ const Controller = require('../../controllers/seasons-controller');
 const createResponse = require('../../utils/response-constructor');
 const {InsufficentDataError} = require('../../utils/errors');
 
-export const join = async (event) => {
+export const getEvents = async (event) => {
   try {
-    const uid = event.requestContext.authorizer.uid;
     const id = event.pathParameters.id;
     if (!id) throw new InsufficentDataError('missing id param');
     const controller = new Controller(admin);
-    const season = await controller.join(uid, id);
+    const season = await controller.getEvents(id);
     return createResponse(200, season);
   } catch (error) {
     return createResponse(400, error);

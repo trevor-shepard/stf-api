@@ -9,7 +9,7 @@ const createResponse = require('../../utils/response-constructor');
 
 export const create = async (event) => {
   try {
-    console.log("season create start")
+    console.log('season create start');
     const uid = event.requestContext.authorizer.uid;
 
     const controller = new Controller(admin);

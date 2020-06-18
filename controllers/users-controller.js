@@ -6,7 +6,7 @@ module.exports = class UserController {
   constructor(admin) {
     console.log('controller constructor');
     this.model = new UserModel(admin);
-    this.seasonModel = new SeasonModel(admin)
+    this.seasonModel = new SeasonModel(admin);
   }
 
   async get(id) {
@@ -49,16 +49,15 @@ module.exports = class UserController {
     }
   }
 
-
   async getSeasons(uid) {
     try {
       const user = await this.model.get(uid);
-      const seasons = {}
-      for (let id of Object.keys(user.seasons)) { 
-        seasons[id] = await this.seasonModel.get(id)
+      const seasons = {};
+      for (const id of Object.keys(user.seasons)) {
+        seasons[id] = await this.seasonModel.get(id);
       }
 
-      return seasons
+      return seasons;
     } catch (error) {
       console.log('user controller level get seasons error', error);
 

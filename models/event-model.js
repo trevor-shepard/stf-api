@@ -3,22 +3,20 @@ const {NotFoundError, InsufficentDataError} = require('../utils/errors');
 
 module.exports = class EventModel extends DataModel {
   constructor(admin) {
-    super(admin, 'event');
+    super(admin, 'events');
   }
 
   async create(data) {
     try {
-      const {user, season, action, date} = data;
+      const {user, activity} = data;
 
       const payload = {
-        user,
-        season,
-        action,
-        date
+        activity,
+        user
       };
 
-      const id = this.createObject(payload);
-
+      const id = await this.createObject(payload);
+      console.log('id', id);
       return {
         ...payload,
         id
@@ -63,13 +61,24 @@ module.exports = class EventModel extends DataModel {
     }
   }
 
-  // Private methods
+  async getUserEvents(uid, seasonStart) {
+    try {
+      const result = await this.collection
+        .where('user', '==', uid)
+        .where('createdate', '>', seasonStart)
+        .get()
+        .then((querySnapshot) => {
+          const values = [];
+          querySnapshot.forEach((doc) => {
+            values.push(doc.data());
+          });
 
-  validateCreateData(data) {
-    const {user, season, action, date} = data;
-    this.validateID(user);
-    this.validateID(season);
-    this.validateString(action);
-    this.validateDate(date);
+          return values;
+        });
+      return result;
+    } catch (error) {
+      console.log('Query User Events Model Level Error', error);
+      throw error;
+    }
   }
 };

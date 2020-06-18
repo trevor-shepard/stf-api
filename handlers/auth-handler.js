@@ -9,16 +9,14 @@ admin.initializeApp({
 module.exports.verifyAuth = async (event, context, callback) => {
   try {
     if (typeof event.authorizationToken === 'undefined') {
-        console.log('AUTH: No token');
-      
+      console.log('AUTH: No token');
 
       return callback('Unauthorized');
     }
 
     const split = event.authorizationToken.split('Bearer');
     if (split.length !== 2) {
-        console.log('AUTH: no token in Bearer');
-      
+      console.log('AUTH: no token in Bearer');
 
       return callback('Unauthorized');
     }
